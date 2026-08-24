@@ -1,0 +1,657 @@
+﻿<!--
+  PLACEHOLDERS TO REPLACE BEFORE LAUNCH:
+  [AGENCY NAME]     - business name, appears in About + footer
+  [FOUNDER 1 NAME]  - about section
+  [FOUNDER 2 NAME]  - about section
+  [PHONE NUMBER]    - contact section + footer (tel: links)
+  [EMAIL]           - contact section + footer (mailto: links)
+  [DOMAIN]          - footer
+  Founder photos    - swap the two initials circles in #about for real photos
+  Contact form      - currently falls back to a mailto: link (no backend).
+                      Swap for a form service (e.g. Formspree) action URL if preferred.
+-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Ads Agency Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #F4F5F4;
+    --bg-alt: #E8EAE9;
+    --text: #21262A;
+    --text-muted: #57636A;
+    --accent: #0E7C6B;
+    --accent-hover: #0B6358;
+    --border: #DADEDC;
+    --card-bg: #FFFFFF;
+
+    --fs-eyebrow: 0.8125rem;
+    --fs-body: 1rem;
+    --fs-small: 0.9375rem;
+    --fs-h1: clamp(2.1rem, 1.55rem + 2.6vw, 3.4rem);
+    --fs-h2: clamp(1.6rem, 1.4rem + 1vw, 2.15rem);
+    --fs-h3: 1.15rem;
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4.5rem;
+
+    --radius: 14px;
+    --max-w: 1080px;
+    --measure: 62ch;
+  }
+
+  /* Preview-only background variants â€” accent/text stay fixed, only the
+     grey background pairing changes. Pick one, then this block (and the
+     switcher UI below) gets removed and the chosen values become the fixed :root. */
+  [data-palette="warm-grey"] {
+    --bg: #F5F4F1;
+    --bg-alt: #EBE8E3;
+    --border: #DEDAD2;
+  }
+  [data-palette="blue-grey"] {
+    --bg: #F2F4F5;
+    --bg-alt: #E4E8EA;
+    --border: #D4DBDD;
+  }
+  [data-palette="high-contrast"] {
+    --bg: #F8F8F7;
+    --bg-alt: #E2E6E4;
+    --border: #D3D9D6;
+  }
+
+  .palette-switcher {
+    position: fixed;
+    top: var(--space-3);
+    right: var(--space-3);
+    z-index: 30;
+    display: flex;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.4rem;
+    box-shadow: 0 4px 16px rgba(20,30,28,0.12);
+    backdrop-filter: blur(6px);
+  }
+  .palette-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+  .palette-swatch[aria-pressed="true"] { border-color: var(--text); }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Sora', system-ui, -apple-system, sans-serif;
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h2 { font-size: var(--fs-h2); font-weight: 700; }
+  h3 { font-size: var(--fs-h3); font-weight: 600; }
+  p { margin: 0; }
+
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+  }
+
+  section { padding: var(--space-8) 0; }
+
+  .section-head {
+    max-width: var(--measure);
+    margin: 0 0 var(--space-6);
+  }
+  .section-head p {
+    margin-top: var(--space-3);
+    color: var(--text-muted);
+    font-size: 1.0625rem;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    font-size: var(--fs-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: var(--space-4);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0.9rem 1.6rem;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn--accent {
+    background: var(--accent);
+    color: #ffffff;
+  }
+  .btn--accent:hover { background: var(--accent-hover); }
+  .btn--accent:active { transform: scale(0.97); }
+
+  /* ---------- Hero ---------- */
+  #hero {
+    background: var(--bg-alt);
+    padding: var(--space-8) 0 var(--space-7);
+  }
+  #hero .wrap { display: flex; flex-direction: column; gap: var(--space-5); }
+  #hero h1 { font-size: var(--fs-h1); font-weight: 700; max-width: 30ch; }
+  #hero .subhead {
+    color: var(--text-muted);
+    font-size: 1.125rem;
+    max-width: 46ch;
+  }
+  #hero .cta-row { margin-top: var(--space-3); }
+
+  .rotator {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    height: 1.15em;
+    vertical-align: bottom;
+    color: var(--accent);
+  }
+  .rotator-word {
+    display: inline-block;
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform 0.42s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.42s ease;
+    white-space: nowrap;
+  }
+  .rotator-word.is-leaving { transform: translateY(-100%); opacity: 0; }
+  .rotator-word.is-entering { transform: translateY(100%); opacity: 0; transition: none; }
+
+  /* ---------- What we do ---------- */
+  .what-we-do-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    align-items: stretch;
+  }
+  @media (min-width: 860px) {
+    .what-we-do-layout { grid-template-columns: 1fr 1fr; }
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--space-5);
+  }
+  .what-we-do-layout .platform-grid { grid-template-columns: 1fr; }
+
+  .what-we-do-media {
+    margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .what-we-do-media .frame {
+    flex: 1 1 auto;
+    min-height: 0;
+    aspect-ratio: 4 / 7;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .what-we-do-media img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+  }
+  .what-we-do-media figcaption {
+    margin-top: var(--space-2);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .platform-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .badge {
+    align-self: flex-start;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999px;
+  }
+  .badge--live { background: rgba(14, 124, 107, 0.12); color: var(--accent); }
+  .badge--soon {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .platform-card p { color: var(--text-muted); }
+
+  /* ---------- Why now ---------- */
+  #why-now { background: var(--bg-alt); }
+  #why-now .wrap { max-width: var(--measure); }
+  #why-now p { font-size: 1.0625rem; color: var(--text); }
+  #why-now p + p { margin-top: var(--space-4); }
+
+  /* ---------- About ---------- */
+  .founders {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+  }
+  .founder-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--border);
+    background: var(--bg-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+  }
+  .founder-name { font-weight: 600; font-size: 1.0625rem; }
+  .founder-role { color: var(--text-muted); font-size: var(--fs-small); margin-top: 0.2rem; }
+  .founder-photo-note { color: var(--text-muted); font-size: 0.8125rem; font-style: italic; margin-top: var(--space-2); }
+
+  /* ---------- How it works ---------- */
+  #how-it-works { background: var(--bg-alt); }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-5);
+    counter-reset: step;
+  }
+  .step { display: flex; flex-direction: column; gap: var(--space-2); }
+  .step-num {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 1.75rem;
+    color: var(--accent);
+  }
+  .step p { color: var(--text-muted); }
+
+  /* ---------- Contact ---------- */
+  #contact {
+    background: var(--bg-alt);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+  @media (min-width: 760px) {
+    .contact-grid { grid-template-columns: 1fr 1.2fr; }
+  }
+  .contact-direct { display: flex; flex-direction: column; gap: var(--space-3); }
+  .contact-direct a {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.0625rem;
+    color: var(--accent);
+  }
+  .contact-direct .label {
+    display: block;
+    font-size: var(--fs-eyebrow);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
+  }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-5);
+  }
+  .form-row { display: flex; flex-direction: column; gap: var(--space-2); }
+  .form-row label { font-size: var(--fs-small); color: var(--text-muted); }
+  .form-row input,
+  .form-row textarea {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+  }
+  .form-row input::placeholder,
+  .form-row textarea::placeholder { color: var(--text-muted); opacity: 0.65; }
+  .form-row textarea { resize: vertical; min-height: 90px; font-family: inherit; }
+  .contact-form .btn { margin-top: var(--space-2); }
+  .form-note { font-size: 0.8125rem; color: var(--text-muted); }
+
+  /* ---------- Footer ---------- */
+  footer {
+    padding: var(--space-6) 0 calc(var(--space-6) + 70px);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+  footer .wrap > * + * { margin-top: var(--space-2); }
+
+  /* ---------- Sticky mobile CTA ---------- */
+  .sticky-cta {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    padding: var(--space-3) var(--space-4);
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -4px 16px rgba(20, 30, 28, 0.08);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+  .sticky-cta.is-visible { transform: translateY(0); }
+  .sticky-cta .btn { width: 100%; }
+  @media (min-width: 641px) {
+    .sticky-cta { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+
+<div class="palette-switcher" id="paletteSwitcher" role="group" aria-label="Preview background combination">
+  <button class="palette-swatch" type="button" data-palette-value="" style="background:linear-gradient(135deg, #F4F5F4 50%, #E8EAE9 50%)" aria-pressed="true" title="Cool Grey (current)"></button>
+  <button class="palette-swatch" type="button" data-palette-value="warm-grey" style="background:linear-gradient(135deg, #F5F4F1 50%, #EBE8E3 50%)" aria-pressed="false" title="Warm Grey"></button>
+  <button class="palette-swatch" type="button" data-palette-value="blue-grey" style="background:linear-gradient(135deg, #F2F4F5 50%, #E4E8EA 50%)" aria-pressed="false" title="Blue Grey"></button>
+  <button class="palette-swatch" type="button" data-palette-value="high-contrast" style="background:linear-gradient(135deg, #F8F8F7 50%, #E2E6E4 50%)" aria-pressed="false" title="High Contrast Grey"></button>
+</div>
+
+<main>
+
+  <section id="hero">
+    <div class="wrap">
+      <span class="eyebrow">Ottawa, Ontario</span>
+      <h1>
+        We help
+        <span class="rotator"><span class="rotator-word" id="rotatorWord">Plumbers</span></span><br>
+        in Ottawa get found by AI.
+      </h1>
+      <p class="subhead">When people ask ChatGPT or Microsoft Copilot for a recommendation, we make sure it's you â€” not your competitor down the street.</p>
+      <div class="cta-row">
+        <a class="btn btn--accent" href="#contact">Book a Free Consultation</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="what-we-do">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>What we do</h2>
+        <p>Three places people are starting to ask AI for recommendations â€” we get your business showing up on them.</p>
+      </div>
+      <div class="what-we-do-layout">
+        <div class="platform-grid">
+          <div class="platform-card">
+            <span class="badge badge--live">Live now</span>
+            <h3>ChatGPT Ads</h3>
+            <p>Millions of people now ask ChatGPT for recommendations instead of searching Google. We get your business mentioned when they ask.</p>
+          </div>
+          <div class="platform-card">
+            <span class="badge badge--live">Live now</span>
+            <h3>Microsoft Copilot Ads</h3>
+            <p>Copilot is built into Windows and Bing, and more people are using it to find local businesses every month. We make sure yours shows up.</p>
+          </div>
+          <div class="platform-card">
+            <span class="badge badge--soon">Coming soon to Canada</span>
+            <h3>Google AI Mode Ads</h3>
+            <p>Google's new AI-powered search is rolling out in Canada soon. We'll have your business ready to go the day it launches.</p>
+          </div>
+        </div>
+        <figure class="what-we-do-media">
+          <div class="frame">
+            <img src="images/chatgpt-ad-example.png" alt="Example of a business ad appearing inside a ChatGPT conversation, shown below the AI's answer" loading="lazy">
+          </div>
+          <figcaption>Example: what an AI ad looks like in a conversation</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="why-now">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Why now</h2>
+      </div>
+      <p>For years, getting found online meant showing up on Google. That's starting to change â€” people are asking AI assistants directly for recommendations and getting a short list of names back, not a page of links.</p>
+      <p>Almost no one in Ottawa is helping local businesses get on that list yet. We are.</p>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>About us</h2>
+        <p>[AGENCY NAME] is run by two people â€” that's it. No account managers, no call center. When you reach out, you talk to one of us, and we're the ones running your campaign.</p>
+      </div>
+      <div class="founders">
+        <div>
+          <div class="founder-avatar" aria-hidden="true">F1</div>
+          <p class="founder-name">[FOUNDER 1 NAME]</p>
+          <p class="founder-role">Strategy &amp; client relationships</p>
+          <p class="founder-photo-note">Photo placeholder</p>
+        </div>
+        <div>
+          <div class="founder-avatar" aria-hidden="true">F2</div>
+          <p class="founder-name">[FOUNDER 2 NAME]</p>
+          <p class="founder-role">Builds &amp; runs every campaign</p>
+          <p class="founder-photo-note">Photo placeholder</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>How it works</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <h3>Free consultation</h3>
+          <p>We learn about your business and give you an honest read on whether this is a good fit. No pressure.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <h3>We set up your first campaign</h3>
+          <p>We build and launch it for you â€” you don't have to touch a thing.</p>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <h3>You see results</h3>
+          <p>We track what's working and adjust. No long-term contract â€” you stay because it's working.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Ready to see if this is a fit?</h2>
+        <p>Book a free, no-obligation call. We'll give you a straight answer either way.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-direct">
+          <div>
+            <span class="label">Call</span>
+            <a href="tel:[PHONE NUMBER]">[PHONE NUMBER]</a>
+          </div>
+          <div>
+            <span class="label">Email</span>
+            <a href="mailto:[EMAIL]">[EMAIL]</a>
+          </div>
+        </div>
+        <form class="contact-form" id="contactForm" novalidate>
+          <div class="form-row">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name" required>
+          </div>
+          <div class="form-row">
+            <label for="business">Business name</label>
+            <input type="text" id="business" name="business" placeholder="Your business name" required>
+          </div>
+          <div class="form-row">
+            <label for="reply">Phone or email</label>
+            <input type="text" id="reply" name="reply" placeholder="Best way to reach you" required>
+          </div>
+          <div class="form-row">
+            <label for="message">Message (optional)</label>
+            <textarea id="message" name="message" placeholder="Anything you'd like us to know"></textarea>
+          </div>
+          <button type="submit" class="btn btn--accent">Book my free consultation</button>
+          <p class="form-note">Submitting opens an email to [EMAIL] with your details filled in.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>[AGENCY NAME] &middot; Ottawa, Ontario</p>
+      <p>[DOMAIN] &middot; [PHONE NUMBER] &middot; [EMAIL]</p>
+      <p>&copy; 2026 [AGENCY NAME]. All rights reserved.</p>
+    </div>
+  </footer>
+
+</main>
+
+<div class="sticky-cta" id="stickyCta">
+  <a class="btn btn--accent" href="#contact">Book a Free Consultation</a>
+</div>
+
+<script>
+  (function () {
+    var switcher = document.getElementById('paletteSwitcher');
+    if (!switcher) return;
+    var buttons = switcher.querySelectorAll('.palette-swatch');
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.documentElement.setAttribute('data-palette', btn.getAttribute('data-palette-value'));
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      });
+    });
+  })();
+
+  (function () {
+    var words = ["Plumbers", "Electricians", "Dentists", "Restaurants", "Roofers", "Salons", "Contractors", "Retail Stores", "Chiropractors", "Law Firms"];
+    var el = document.getElementById('rotatorWord');
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (el) {
+      var i = 0;
+      setInterval(function () {
+        i = (i + 1) % words.length;
+        if (reduceMotion) {
+          el.textContent = words[i];
+          return;
+        }
+        el.classList.add('is-leaving');
+        setTimeout(function () {
+          el.textContent = words[i];
+          el.classList.remove('is-leaving');
+          el.classList.add('is-entering');
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              el.classList.remove('is-entering');
+            });
+          });
+        }, 420);
+      }, 2400);
+    }
+  })();
+
+  (function () {
+    var stickyBar = document.getElementById('stickyCta');
+    var hero = document.getElementById('hero');
+    if (!stickyBar || !hero || !('IntersectionObserver' in window)) return;
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        stickyBar.classList.toggle('is-visible', !entry.isIntersecting);
+      });
+    }, { threshold: 0 });
+    obs.observe(hero);
+  })();
+
+  (function () {
+    var form = document.getElementById('contactForm');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+      var name = form.name.value.trim();
+      var business = form.business.value.trim();
+      var reply = form.reply.value.trim();
+      var message = form.message.value.trim();
+      var subject = 'Free consultation request â€” ' + business;
+      var body = 'Name: ' + name + '\nBusiness: ' + business + '\nBest way to reach: ' + reply + '\n\nMessage:\n' + (message || '(none)');
+      var mailto = 'mailto:[EMAIL]?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      window.location.href = mailto;
+    });
+  })();
+</script>
