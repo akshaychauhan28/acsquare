@@ -6,8 +6,12 @@
 
 /* ---------- CONFIG ---------- */
 
-// Where the contact form sends to (opens the visitor's email app).
+// Public contact email shown on the page (footer/contact-direct in index.html).
 const CONTACT_EMAIL = "ac36693@gmail.com";
+
+// Contact form submits here. Notifications land in the inbox set on the
+// Formspree account (clafy.fit@gmail.com), independent of CONTACT_EMAIL above.
+const FORM_ENDPOINT = "https://formspree.io/f/xjykwnlp";
 
 // How long each trade stays on screen in the hero (ms).
 const ROTATE_EVERY = 5500;
@@ -184,20 +188,34 @@ function initFaq() {
   renderOptions();
 }
 
-/* Contact form → opens email app with a prefilled message */
+/* Contact form → posts to Formspree via fetch (falls back to a native POST, see the form's action/method, if JS fails) */
 function initContact() {
   const form = $("#contact-form");
-  form.addEventListener("submit", (e) => {
+  const note = $(".contact-note", form);
+  const defaultNote = note.textContent;
+  const btn = form.querySelector("button[type=submit]");
+  const btnLabel = btn.textContent;
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const d = Object.fromEntries(new FormData(form));
-    const subject = `Free consultation — ${d.business || "new enquiry"}`;
-    const body = [
-      `Name: ${d.name}`,
-      `Business: ${d.business}`,
-      `Want to show up for: ${d.service || "-"}`,
-      `Reach me at: ${d.reach}`
-    ].join("\n");
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    btn.disabled = true;
+    btn.textContent = "Sending…";
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: new FormData(form)
+      });
+      if (!res.ok) throw new Error("Formspree error");
+      $$("input", form).forEach((el) => (el.disabled = true));
+      btn.textContent = "Sent";
+      note.textContent = "Thanks — we got it and will be in touch shortly.";
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = btnLabel;
+      note.textContent = `Something went wrong sending that — email us directly at ${CONTACT_EMAIL} instead.`;
+    }
   });
 }
 

@@ -309,12 +309,13 @@
     </section>
 
     <!-- ============ CONTACT ============ -->
-    <!-- Submitting opens the visitor's email app with the answers filled in (see CONTACT_EMAIL in js/main.js). -->
+    <!-- Submits to Formspree (see FORM_ENDPOINT in js/main.js). action/method below are a no-JS fallback. -->
     <section id="contact" class="dark-band contact">
       <div class="container section-dark">
         <span class="eyebrow eyebrow-light">Contact</span>
 
-        <form class="madlib" id="contact-form">
+        <form class="madlib" id="contact-form" action="https://formspree.io/f/xjykwnlp" method="POST">
+          <input type="hidden" name="_subject" value="New AC Square consultation request">
           <span>Hi, I&rsquo;m</span>
           <label class="blank"><span class="sr-only">Your name</span><input name="name" type="text" placeholder="your name" autocomplete="name" required style="--w: 9.5ch"></label>
           <span>and I run</span>
